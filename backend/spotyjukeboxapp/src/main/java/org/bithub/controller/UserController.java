@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +23,7 @@ public class UserController {
         userService.persist(request);
     }
 
-    @GetMapping("/get/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserInfo> get(@PathVariable("userId") String userId) {
         return ResponseEntity.ok().body(userService.get(userId));
     }

@@ -25,7 +25,9 @@ const PostLoginPage = () => {
                             <p className="mt-2 text-gray-600">Welcome, {user?.profile.family_name || 'User'}</p>
                         </div>
                         <button
-                            onClick={signoutCallback}
+                            onClick={() => {
+                                console.log('Clicked Logout Button')
+                                signoutCallback()}}
                             className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                         >
                             <LogOut size={20} />

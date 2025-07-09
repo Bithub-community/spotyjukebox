@@ -15,9 +15,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         generate_statistics: true
-        jdbc:
-          lob:
-            non_contextual_creation: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.spotify.com
+          jwk-set-uri: https://accounts.spotify.com/oidc/certs/v1
   h2:
     console:
       enabled: true
@@ -34,3 +37,13 @@ management:
   endpoint:
     health:
       show-details: "always"
+logging:
+  level:
+    org.springframework.security: DEBUG
+spotify:
+  client:
+    id: 308c73a474314c9bb28fa34f5c63e6e5
+    secret: 5944485e1d46451e97917d425f2f6bd4
+frontend:
+  redirect:
+    url: http://localhost:5173/callback

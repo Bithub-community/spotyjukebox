@@ -6,8 +6,21 @@ import LoginPage from '@/pages/LoginPage';
 import PostLoginPage from '@/pages/PostLoginPage';
 
 const CallbackPage: React.FC = () => {
+
+  const handleAuthCallback = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get('access_token');
+    
+    if (accessToken) {
+      // Store the access token securely (e.g., in memory or secure storage)
+      localStorage.setItem('spotify_access_token', accessToken);
+    
+    }
+  };
+
   useEffect(() => {
     userManager.signinRedirectCallback().then(() => {
+      handleAuthCallback();
       window.location.href = '/main';
     });
   }, []);
