@@ -1,7 +1,6 @@
 package org.bithub.model;
 
 import jakarta.validation.constraints.NotBlank;
-
 import java.util.Set;
 
 public record TokenPersistingRequest(
@@ -11,5 +10,4 @@ public record TokenPersistingRequest(
         @NotBlank String email,
         @NotBlank String displayName,
         Set<String> scopes
-) {
-}
+) {}

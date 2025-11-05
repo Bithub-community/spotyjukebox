@@ -5,14 +5,24 @@ import org.bithub.model.TokenPersistingRequest;
 public class TokenPersistRequestValidator {
 
     public static void validate(TokenPersistingRequest request) {
-        if (request.userId() == null || request.userId().isBlank()) {
-            throw new IllegalArgumentException("userId is required");
+        if (request == null) {
+            throw new IllegalArgumentException("Request body cannot be null");
         }
-        if (request.accessToken() == null || request.accessToken().isBlank()) {
-            throw new IllegalArgumentException("accessToken is required");
+
+        if (isBlank(request.userId())) {
+            throw new IllegalArgumentException("Spotify user ID (userId) is required.");
         }
-        if (request.refreshToken() == null || request.refreshToken().isBlank()) {
-            throw new IllegalArgumentException("refreshToken is required");
+
+        if (isBlank(request.accessToken())) {
+            throw new IllegalArgumentException("Access token (accessToken) is required.");
         }
+
+        if (isBlank(request.refreshToken())) {
+            throw new IllegalArgumentException("Refresh token (refreshToken) is required.");
+        }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

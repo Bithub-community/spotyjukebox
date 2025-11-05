@@ -1,0 +1,36 @@
+# Maven build outputs
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Java compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs & Temporary files
+*.log
+logs/
+tmp/
+temp/
+hs_err_pid*
+
+# Environment / Config files
+.env
+.env.*
+application-local.properties
+application-local.yml
+*.secret
+*.key
+*.pem
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini

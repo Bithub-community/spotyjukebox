@@ -1,4 +1,4 @@
-package org.bithub.persistence;
+package org.bithub.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,18 +13,19 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(
         name = "user_info",
-        indexes = @Index(name = "ux_user_info_user_id", columnList = "user_id", unique = true)
+        indexes = @Index(name = "ux_user_info_user_id", columnList = "spotify_user_id", unique = true)
 )
-@Builder
 public class UserInfo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @Column(name = "spotify_user_id", nullable = false)
+    private String spotifyUserId;
 
     private String email;
 
@@ -41,6 +42,12 @@ public class UserInfo {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "expires_in", nullable = false)
+    private Long expiresIn;
+
+    @Column(name = "jukebox_playlist_id")
+    private String jukeboxPlaylistId;
 
     @ElementCollection
     @CollectionTable(

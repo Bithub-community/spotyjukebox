@@ -1,10 +1,18 @@
 const BASE_URL = "https://api.spotify.com/v1";
 
-type FetchOptions = Omit<RequestInit, "body"> & { body?: Record<string, any> | null };
+type FetchOptions = Omit<RequestInit, "body"> & {
+  body?: Record<string, any> | null;
+};
 
+/**
+ * Creates a lightweight, token-aware Spotify Web API client.
+ * Handles rate limiting, JSON parsing, and error wrapping.
+ */
 export const createSpotifyClient = (accessToken: string) => {
   const fetchSpotify = async (endpoint: string, options: FetchOptions = {}) => {
     const { body, ...restOptions } = options;
+
+    // 🔹 Include access token in every request
     const headers: HeadersInit = {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
@@ -16,19 +24,18 @@ export const createSpotifyClient = (accessToken: string) => {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    // special handling: rate limiting (429)
+    // ⚠️ Handle Spotify rate limits (HTTP 429)
     if (response.status === 429) {
       const retryAfter = parseInt(response.headers.get("Retry-After") || "1", 10);
-      console.warn(
-        `Spotify API rate limit hit. Retrying after ${retryAfter} seconds...`
-      );
+      console.warn(`Spotify API rate limit hit. Retrying after ${retryAfter} seconds...`);
       await new Promise((res) => setTimeout(res, retryAfter * 1000));
-      return fetchSpotify(endpoint, options); // retry once
+      return fetchSpotify(endpoint, options); // retry once recursively
     }
 
-    // ✔️ always read the text first
+    // Always read response text (Spotify may send non-JSON errors)
     const raw = await response.text();
 
+    // ❌ Throw detailed error if request failed
     if (!response.ok) {
       let errorMessage: string;
       try {
@@ -40,12 +47,14 @@ export const createSpotifyClient = (accessToken: string) => {
       throw new Error(`Spotify API error (${response.status}): ${errorMessage}`);
     }
 
-    // ✔️ if succeed
-    if (response.status === 204 ||!raw) return null; // empty body
+    // ✅ Return parsed JSON if successful, or null for empty (204)
+    if (response.status === 204 || !raw) return null;
+
     try {
       return JSON.parse(raw);
     } catch {
-      return raw; // if not json
+      // Return raw text if response isn’t valid JSON
+      return raw;
     }
   };
 

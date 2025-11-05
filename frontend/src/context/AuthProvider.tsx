@@ -1,56 +1,52 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react';
-import { User } from 'oidc-client-ts';
-import { userManager } from '@/config/oidc.config';
+import React, { createContext, useEffect, useState, ReactNode } from "react";
+
+interface User {
+  id: string;
+  email?: string;
+  displayName?: string;
+  spotifyLinked?: boolean;
+  access_token:string;
+  jukeboxPlaylistId:string;
+}
 
 interface AuthContextProps {
   user: User | null;
-  signinRedirect: () => void;
-  signoutRedirect: () => void;
-  signoutCallback: () => void;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  logout: () => void;
 }
 
 type AuthProviderProps = {
-  children: ReactNode; // Explicitly define children as a prop
+  children: ReactNode;
 };
 
-export const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
+export const AuthContext = createContext<AuthContextProps>({
+  user: null,
+  setUser: () => {},
+  logout: () => {},
+});
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // New loading state
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   useEffect(() => {
-    const handleUserLoaded = (loadedUser: User) => {
-      setUser(loadedUser);
-      setLoading(false);
-    };
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
 
-    const handleUserUnloaded = () => {
-      setUser(null);
-      setLoading(false);
-    };
-
-    userManager.events.addUserLoaded(handleUserLoaded);
-    userManager.events.addUserUnloaded(handleUserUnloaded);
-
-    userManager.getUser().then((loadedUser) => {
-      setUser(loadedUser);
-      setLoading(false); // Done loading
-    });
-
-    return () => {
-      userManager.events.removeUserLoaded(handleUserLoaded);
-      userManager.events.removeUserUnloaded(handleUserUnloaded);
-    };
-  }, []);
-
-  const signinRedirect = () => userManager.signinRedirect();
-  const signoutRedirect = () => userManager.signoutRedirect();
-  const signoutCallback = () => userManager.signoutCallback();
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
 
   return (
-    <AuthContext.Provider value={{ user, signinRedirect, signoutRedirect, signoutCallback }}>
-      {loading ? <div>Loading...</div> : children} {/* Delay until ready */}
+    <AuthContext.Provider value={{ user, setUser, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 };

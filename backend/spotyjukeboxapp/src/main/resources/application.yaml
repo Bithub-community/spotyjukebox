@@ -1,4 +1,6 @@
 spring:
+  main:
+    banner-mode: "off"
   application:
     name: spotyjukeboxapp
   datasource:
@@ -9,12 +11,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        generate_statistics: true
+        generate_statistics: false
         jdbc:
           lob:
             non_contextual_creation: true
@@ -36,5 +38,8 @@ management:
       show-details: "always"
 
 spotify:
+  client-id: ${SPOTIFY_CLIENT_ID}
+  client-secret: ${SPOTIFY_CLIENT_SECRET}
+  redirect-uri: ${SPOTIFY_REDIRECT_URI}
   api:
     url: https://api.spotify.com/v1
